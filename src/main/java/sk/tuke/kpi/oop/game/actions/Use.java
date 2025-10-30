@@ -1,6 +1,7 @@
 package sk.tuke.kpi.oop.game.actions;
 
 import sk.tuke.kpi.gamelib.Actor;
+import sk.tuke.kpi.oop.game.items.Usable;
 import sk.tuke.kpi.gamelib.framework.actions.AbstractAction;
 
 public class Use<A extends Actor> extends AbstractAction<A>{
@@ -32,3 +33,4 @@ public class Use<A extends Actor> extends AbstractAction<A>{
         }
     }
 }
+

@@ -16,7 +16,7 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_11
 }
 
 application {
