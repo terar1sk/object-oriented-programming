@@ -5,3 +5,4 @@ public interface Switchable{
     void turnOff();
     boolean isOn();
 }
+

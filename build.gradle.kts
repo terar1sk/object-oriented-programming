@@ -16,16 +16,18 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_16
 }
 
 application {
-    mainClassName = "sk.tuke.kpi.gamelib.framework.Main"
+    mainClass.set("sk.tuke.kpi.oop.game.Main")
 }
 
 dependencies {
     implementation("sk.tuke.kpi.gamelib:gamelib-framework:$gamelibVersion")
     implementation("sk.tuke.kpi.gamelib:gamelib-backend-$backend:$gamelibVersion")
+    implementation("sk.tuke.kpi.gamelib:gamelib-inspector:$gamelibVersion")
+    implementation("sk.tuke.kpi.gamelib:gamelib-backend-lwjgl:$gamelibVersion")
 }
 
 tasks {

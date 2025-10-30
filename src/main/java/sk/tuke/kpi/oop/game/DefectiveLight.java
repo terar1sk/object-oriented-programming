@@ -50,3 +50,4 @@ public class DefectiveLight extends Light implements Repairable{
         return true;
     }
 }
+

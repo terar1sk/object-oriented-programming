@@ -1,9 +1,9 @@
-package sk.tuke.kpi.oop.game.tools;
+package sk.tuke.kpi.oop.game.items;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 
-public class FireExtinguisher extends AbstractActor{
+public class FireExtinguisher extends AbstractActor implements Collectible{
     private int remainingUses;
 
     public FireExtinguisher(){

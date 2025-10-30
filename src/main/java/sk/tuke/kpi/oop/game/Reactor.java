@@ -3,8 +3,8 @@ package sk.tuke.kpi.oop.game;
 import org.jetbrains.annotations.NotNull;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
-import sk.tuke.kpi.oop.game.tools.FireExtinguisher;
-import sk.tuke.kpi.oop.game.tools.Hammer;
+import sk.tuke.kpi.oop.game.items.FireExtinguisher;
+import sk.tuke.kpi.oop.game.items.Hammer;
 import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.oop.game.actions.PerpetualReactorHeating;
 
@@ -19,7 +19,6 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
     private Animation hotAnimation;
     private Animation brokenAnimation;
     private Animation offAnimation;
-    private Light connectedLight;
 
     private Set<EnergyConsumer> devices;
 
@@ -90,10 +89,18 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
         if(!isOn || increment < 0){
             return;
         }
-        updateTemperature(increment);
+        if(damage > 66){
+            temperature += (int) (2 * increment);
+        }
+        else if(damage > 33){
+            temperature += (int) (1.5 * increment);
+        }
+        else{
+            temperature += increment;
+        }
         if(temperature > 2000){
             int curTemperature = temperature - 2000;
-            damage = calculateDamage(curTemperature);
+            damage = Math.min(100, Math.round((100 * curTemperature) / 4000));
         }
         if(temperature >= 6000){
             damage = 100;
@@ -153,20 +160,20 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
     }
 
     private void updateAnimation(){
-        if(this.damage >= 100){
-            setAnimation(this.brokenAnimation);
-        }
-        else if(this.temperature > 4000 && isOn){
-            setAnimation(this.hotAnimation);
+        if(damage >= 100){
+            setAnimation(brokenAnimation);
         }
         else if(!isOn){
-            setAnimation(this.offAnimation);
+            setAnimation(offAnimation);
+        }
+        else if(temperature > 4000){
+            setAnimation(hotAnimation);
         }
         else{
-            setAnimation(this.normalAnimation);
+            setAnimation(normalAnimation);
         }
 
-        float frameDuration = 0.1f - (0.0005f * this.damage);
+        float frameDuration = 0.1f - (0.0005f * damage);
         getAnimation().setFrameDuration(Math.max(frameDuration, 0.02f));
     }
 

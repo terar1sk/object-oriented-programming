@@ -57,3 +57,4 @@ public class Computer extends AbstractActor implements EnergyConsumer{
         return powered;
     }
 }
+
