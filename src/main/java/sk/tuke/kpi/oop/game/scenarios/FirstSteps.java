@@ -6,7 +6,7 @@ import sk.tuke.kpi.oop.game.characters.Ripley;
 import sk.tuke.kpi.gamelib.SceneListener;
 import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.oop.game.controllers.MovableController;
-import sk.tuke.kpi.oop.game.items.*;
+import sk.tuke.kpi.oop.game.tools.*;
 import sk.tuke.kpi.gamelib.actions.When;
 import sk.tuke.kpi.gamelib.GameApplication;
 import sk.tuke.kpi.oop.game.controllers.KeeperController;

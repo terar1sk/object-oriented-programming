@@ -1,4 +1,4 @@
-package sk.tuke.kpi.oop.game.items;
+package sk.tuke.kpi.oop.game.tools;
 
 import sk.tuke.kpi.gamelib.ActorContainer;
 import org.jetbrains.annotations.Nullable;

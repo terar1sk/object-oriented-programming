@@ -3,7 +3,7 @@ package sk.tuke.kpi.oop.game.actions;
 import sk.tuke.kpi.gamelib.framework.actions.AbstractAction;
 import sk.tuke.kpi.gamelib.Actor;
 import sk.tuke.kpi.oop.game.Keeper;
-import sk.tuke.kpi.oop.game.items.Collectible;
+import sk.tuke.kpi.oop.game.tools.Collectible;
 import sk.tuke.kpi.gamelib.Scene;
 
 import java.util.List;

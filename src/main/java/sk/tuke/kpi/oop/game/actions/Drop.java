@@ -1,7 +1,7 @@
 package sk.tuke.kpi.oop.game.actions;
 
 import sk.tuke.kpi.gamelib.framework.actions.AbstractAction;
-import sk.tuke.kpi.oop.game.items.Collectible;
+import sk.tuke.kpi.oop.game.tools.Collectible;
 import sk.tuke.kpi.oop.game.Keeper;
 
 public class Drop <A extends Keeper> extends AbstractAction<A>{

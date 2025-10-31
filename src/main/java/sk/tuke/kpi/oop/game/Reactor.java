@@ -3,8 +3,8 @@ package sk.tuke.kpi.oop.game;
 import org.jetbrains.annotations.NotNull;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
-import sk.tuke.kpi.oop.game.items.FireExtinguisher;
-import sk.tuke.kpi.oop.game.items.Hammer;
+import sk.tuke.kpi.oop.game.tools.FireExtinguisher;
+import sk.tuke.kpi.oop.game.tools.Hammer;
 import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.oop.game.actions.PerpetualReactorHeating;
 

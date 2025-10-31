@@ -1,13 +1,13 @@
-package sk.tuke.kpi.oop.game.items;
+package sk.tuke.kpi.oop.game.tools;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 import sk.tuke.kpi.oop.game.characters.Ripley;
 
-public class Energy extends AbstractActor implements Usable<Ripley>{
-    public Energy(){
-        Animation energyAnimation = new Animation("sprites/energy.png", 16, 16);
-        setAnimation(energyAnimation);
+public class Ammo extends AbstractActor implements Usable<Ripley>{
+    public Ammo(){
+        Animation ammoAnimation = new Animation("sprites/ammo.png", 16, 16);
+        setAnimation(ammoAnimation);
     }
 
     @Override
@@ -15,8 +15,9 @@ public class Energy extends AbstractActor implements Usable<Ripley>{
         if(ripley == null){
             return;
         }
-        if(ripley.getEnergy() < 100){
-            ripley.setEnergy(100);
+        if(ripley.getAmmo() < 500){
+            int ammoToAdd = Math.min(50, 500 - ripley.getAmmo());
+            ripley.setAmmo(ripley.getAmmo() + ammoToAdd);
             getScene().removeActor(this);
         }
     }
@@ -26,5 +27,3 @@ public class Energy extends AbstractActor implements Usable<Ripley>{
         return Ripley.class;
     }
 }
-
-
