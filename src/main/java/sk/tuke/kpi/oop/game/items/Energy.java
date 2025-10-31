@@ -26,3 +26,5 @@ public class Energy extends AbstractActor implements Usable<Ripley>{
         return Ripley.class;
     }
 }
+
+
