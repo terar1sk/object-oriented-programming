@@ -18,9 +18,9 @@ public class FirstSteps implements SceneListener{
     private Energy energy;
     private Ammo ammo;
 
-    Hammer hammer = new Hammer();
-    FireExtinguisher fireExtinguisher = new FireExtinguisher();
-    Wrench wrench = new Wrench();
+    private Hammer hammer = new Hammer();
+    private FireExtinguisher fireExtinguisher = new FireExtinguisher();
+    private Wrench wrench = new Wrench();
 
     @Override
     public void sceneInitialized(@NotNull Scene scene){
