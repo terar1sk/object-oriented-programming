@@ -21,7 +21,6 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
     private Animation offAnimation;
 
     private Set<EnergyConsumer> devices;
-
     public Reactor(){
         this.temperature = 0;
         this.damage = 0;
@@ -89,20 +88,12 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
         if(!isOn || increment < 0){
             return;
         }
-        if(damage > 66){
-            temperature += (int) (2 * increment);
-        }
-        else if(damage > 33){
-            temperature += (int) (1.5 * increment);
-        }
-        else{
-            temperature += increment;
-        }
+        updateTemperature(increment);
         if(temperature > 2000){
             int curTemperature = temperature - 2000;
-            damage = Math.min(100, Math.round((100 * curTemperature) / 4000));
+            damage = calculateDamage(curTemperature);
         }
-        if(temperature >= 6000){
+        if(temperature >= 6000 && damage < 100){
             damage = 100;
             isOn = false;
             setAnimation(brokenAnimation);
@@ -124,7 +115,7 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
     }
 
     private int calculateDamage(int curTemperature){
-        return Math.min(100, Math.round((100 * curTemperature) / 4000));
+        return Math.min(100, Math.round((100f * curTemperature) / 4000f));
     }
 
     private void notifyDevices(boolean isPowered){
@@ -181,7 +172,7 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
         if(hammer != null && damage > 0){
             if(hammer.repair(this)){
                 int calculatedTemperature = 2000 + damage * 40;
-                if (calculatedTemperature < temperature){
+                if(calculatedTemperature < temperature){
                     temperature = calculatedTemperature;
                 }
                 updateAnimation();
