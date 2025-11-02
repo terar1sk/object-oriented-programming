@@ -170,15 +170,13 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
     }
 
     public boolean repair(Hammer hammer){
-        if(hammer != null && damage > 0){
-            if(hammer.repair(this)){
-                int calculatedTemperature = 2000 + damage * 40;
-                if(calculatedTemperature < temperature){
-                    temperature = calculatedTemperature;
-                }
-                updateAnimation();
-                return true;
+        if(hammer != null && damage > 0 && hammer.repair(this)){
+            int calculatedTemperature = 2000 + damage * 40;
+            if(calculatedTemperature < temperature){
+                temperature = calculatedTemperature;
             }
+            updateAnimation();
+            return true;
         }
         return false;
     }
