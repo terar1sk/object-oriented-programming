@@ -2,7 +2,6 @@ package sk.tuke.kpi.oop.game;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
-import sk.tuke.kpi.oop.game.characters.Player;
 import sk.tuke.kpi.oop.game.characters.Ripley;
 
 public class Teleport extends AbstractActor{
@@ -32,26 +31,18 @@ public class Teleport extends AbstractActor{
         this.destination = destinationTeleport;
     }
 
-    public void teleportPlayer(Player player){
-        if(player instanceof Ripley){
-            teleportPlayer((Ripley) player);
-        }
-    }
-
     public void teleportPlayer(Ripley player){
-        if(player == null)return;
-
-        float targetCenterX = getPosX() + (float) getAnimation().getWidth() / 2;
-        float targetCenterY = getPosY() + (float) getAnimation().getHeight() / 2;
+        if(player == null || destination == null)return;
+        float targetCenterX = destination.getPosX() + (float) destination.getAnimation().getWidth() / 2;
+        float targetCenterY = destination.getPosY() + (float) destination.getAnimation().getHeight() / 2;
         float newX = targetCenterX - (float) player.getAnimation().getWidth() / 2;
         float newY = targetCenterY - (float) player.getAnimation().getHeight() / 2;
-
         player.setPosition((int) newX, (int) newY);
-        this.recentlyTeleportedIn = true;
+        destination.recentlyTeleportedIn = true;
     }
 
-    public void checkTeleportActivation(Player player){
-        if(player == null || destination == null)return;
+    public void checkTeleportActivation(Ripley player){
+        if(player == null)return;
 
         float px = player.getPosX() + (float) player.getAnimation().getWidth() / 2;
         float py = player.getPosY() + (float) player.getAnimation().getHeight() / 2;
@@ -63,7 +54,7 @@ public class Teleport extends AbstractActor{
         boolean inside = (px >= tx && px <= tx + tw && py >= ty && py <= ty + th);
         if(inside){
             if(!recentlyTeleportedIn && destination != null && destination != this){
-                destination.teleportPlayer(player);
+                teleportPlayer(player);
             }
         }
         else{
