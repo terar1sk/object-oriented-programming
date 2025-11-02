@@ -48,26 +48,22 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
     }
 
     public void turnOn(){
-        if(this.getDamage() < 100){
+        if(damage < 100){
             isOn = true;
-            for(EnergyConsumer device : devices){
-                device.setPowered(true);
-            }
+            notifyDevices(true);
             updateAnimation();
         }
     }
 
     public void turnOff(){
+        isOn = false;
         if(temperature >= 6000){
             setAnimation(brokenAnimation);
         }
         else{
             setAnimation(offAnimation);
         }
-        isOn = false;
-        for(EnergyConsumer device : devices){
-            device.setPowered(false);
-        }
+        notifyDevices(false);
     }
 
     public void addDevice(EnergyConsumer device){
@@ -98,6 +94,14 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
             isOn = false;
             setAnimation(brokenAnimation);
             notifyDevices(false);
+            return;
+        }
+
+        if(damage >= 100){
+            isOn = false;
+            setAnimation(brokenAnimation);
+            notifyDevices(false);
+            return;
         }
         updateAnimation();
     }
@@ -118,26 +122,23 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
         return Math.min(100, Math.round((100f * curTemperature) / 4000f));
     }
 
-    private void notifyDevices(boolean isPowered){
+    private void notifyDevices(boolean powered){
         for(EnergyConsumer device : devices){
-            device.setPowered(isPowered);
+            device.setPowered(powered && isOn && damage < 100);
         }
     }
 
     public void decreaseTemperature(int decrement){
-        if(decrement < 0 || !isOn || damage >= 100){
-            return;
-        }
-
-        if(this.damage >= 50){
-            this.temperature -= decrement / 2;
+        if(decrement < 0 || !isOn || damage >= 100)return;
+        if(damage >= 50){
+            temperature -= decrement / 2;
         }
         else{
-            this.temperature -= decrement;
+            temperature -= decrement;
         }
 
-        if(this.temperature < 0){
-            this.temperature = 0;
+        if(temperature < 0){
+            temperature = 0;
         }
         updateAnimation();
     }
@@ -157,7 +158,7 @@ public class Reactor extends AbstractActor implements Switchable, Repairable{
         else if(!isOn){
             setAnimation(offAnimation);
         }
-        else if(temperature > 4000){
+        else if(temperature > 4000 && damage < 100){
             setAnimation(hotAnimation);
         }
         else{

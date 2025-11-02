@@ -2,6 +2,7 @@ package sk.tuke.kpi.oop.game;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+import sk.tuke.kpi.oop.game.characters.Player;
 import sk.tuke.kpi.oop.game.characters.Ripley;
 
 public class Teleport extends AbstractActor{
@@ -31,6 +32,12 @@ public class Teleport extends AbstractActor{
         this.destination = destinationTeleport;
     }
 
+    public void teleportPlayer(Player player){
+        if(player instanceof Ripley){
+            teleportPlayer((Ripley) player);
+        }
+    }
+
     public void teleportPlayer(Ripley player){
         if(player == null)return;
 
@@ -43,7 +50,7 @@ public class Teleport extends AbstractActor{
         this.recentlyTeleportedIn = true;
     }
 
-    public void checkTeleportActivation(Ripley player){
+    public void checkTeleportActivation(Player player){
         if(player == null || destination == null)return;
 
         float px = player.getPosX() + (float) player.getAnimation().getWidth() / 2;
