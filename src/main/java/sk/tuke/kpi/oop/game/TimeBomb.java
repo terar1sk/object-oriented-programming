@@ -6,56 +6,47 @@ import sk.tuke.kpi.gamelib.actions.Wait;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 
-public class TimeBomb extends AbstractActor{
-    private Animation explodedBomb;
-    private float time;
-    private boolean isActivated;
-    private boolean isExploded;
-    private Animation activatedBomb;
+public class TimeBomb extends AbstractActor {
 
-    public TimeBomb(float time){
-        this.time = time;
-        isActivated = false;
-        isExploded = false;
+    private float timeToDetonate;
+    private boolean activated;
+    private Animation activatedAnimation;
+    private Animation explodingAnimation;
 
-        Animation normalBomb = new Animation("sprites/bomb.png");
-        activatedBomb = new Animation("sprites/bomb_activated.png", 16, 16, 0.2f);
-        explodedBomb = new Animation("sprites/small_explosion.png", 64, 32, 0.1f, Animation.PlayMode.ONCE);
-        setAnimation(normalBomb);
+    public TimeBomb(float time) {
+        setAnimation(new Animation("sprites/bomb.png"));
+        activatedAnimation = new Animation("sprites/bomb_activated.png", 16, 16, 0.2f,
+            Animation.PlayMode.LOOP_PINGPONG);
+        explodingAnimation = new Animation("sprites/small_explosion.png", 64, 32, 0.5f,
+            Animation.PlayMode.ONCE);
+
+        timeToDetonate = time;
+        activated = false;
     }
 
-    public boolean isActivated(){
-        return isActivated;
+    public float getTimeToDetonate() {
+        return timeToDetonate;
     }
 
-    public boolean isExploded(){
-        return isExploded;
+    public boolean isActivated() {
+        return activated;
     }
 
-    public float getTime(){
-        return time;
+    public void activate() {
+        if (activated)
+            return;
+
+        activated = true;
+
+        setAnimation(activatedAnimation);
+        new ActionSequence<>(
+            new Wait<>(timeToDetonate),
+            new Invoke<>( this::explode ),
+            new Invoke<>( () -> getScene().removeActor(this))
+        ).scheduleFor(this);
     }
 
-    public void activate(){
-        if(!isActivated && !isExploded){
-            isActivated = true;
-            setAnimation(activatedBomb);
-            new ActionSequence<>(
-                new Wait<>(this.time),
-                new Invoke<>(this::explode),
-                new Invoke<>(this::remove)
-            ).scheduleFor(this);
-        }
-    }
-
-    private void remove(){
-        getScene().removeActor(this);
-    }
-
-    public void explode(){
-        if (!isExploded){
-            setAnimation(explodedBomb);
-            isExploded = true;
-        }
+    protected void explode() {
+        setAnimation(explodingAnimation);
     }
 }

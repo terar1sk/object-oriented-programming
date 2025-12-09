@@ -1,26 +1,34 @@
 package sk.tuke.kpi.oop.game.actions;
 
 import sk.tuke.kpi.gamelib.framework.actions.AbstractAction;
-import sk.tuke.kpi.oop.game.tools.Collectible;
 import sk.tuke.kpi.oop.game.Keeper;
+import sk.tuke.kpi.oop.game.items.Collectible;
 
 public class Drop <A extends Keeper> extends AbstractAction<A>{
+
+    public Drop(){
+
+    }
+
     @Override
-    public void execute(float deltaTime){
-        A keeper = getActor();
-        if(keeper == null || keeper.getScene() == null || keeper.getBackpack() == null){
+    public void execute(float deltaTime) {
+
+        Keeper actor = getActor();
+        if(actor == null || isDone() || actor.getBackpack().peek() == null || actor.getScene() == null){
             setDone(true);
             return;
         }
-        Collectible item = keeper.getBackpack().peek();
-        if(item == null){
-            setDone(true);
+
+        Collectible item = getActor().getBackpack().peek();
+        if(item == null)
             return;
-        }
-        int centerX = keeper.getPosX() + keeper.getWidth() / 2 - item.getWidth() / 2;
-        int centerY = keeper.getPosY() + keeper.getHeight() / 2 - item.getHeight() / 2;
-        keeper.getScene().addActor(item, centerX, centerY);
-        keeper.getBackpack().remove(item);
+
+        actor.getScene().addActor(item,
+                                    (actor.getPosX() + (actor.getWidth()-item.getWidth()/2)),
+                                    (actor.getPosY() + (actor.getHeight()-item.getHeight()/2))
+        );
+        actor.getBackpack().remove(item);
+
         setDone(true);
     }
 }

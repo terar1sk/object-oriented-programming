@@ -6,40 +6,38 @@ import sk.tuke.kpi.gamelib.framework.Player;
 import sk.tuke.kpi.gamelib.framework.actions.Loop;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 
-public class Helicopter extends AbstractActor{
-    private static final int SPEED = 1;
 
-    public Helicopter(){
-        setAnimation(new Animation("sprites/heli.png", 64, 64, 0.2f, Animation.PlayMode.LOOP_PINGPONG));
+public class Helicopter extends AbstractActor {
+
+    private Player player;
+
+    public Helicopter() {
+        setAnimation(new Animation("sprites/heli.png", 64, 64,
+            0.1f, Animation.PlayMode.LOOP_PINGPONG)
+        );
+        player = null;
     }
-
-    public void searchAndDestroy(){
-        new Loop<>(new Invoke<>(this::searchActor)).scheduleFor(this);
-    }
-
-    private void searchActor(){
-        Player refActor = getScene().getLastActorByType(Player.class);
-        if (refActor == null) return;
-
-        int newPositionX = getPosX();
-        int newPositionY = getPosY();
-        if(getPosX() > refActor.getPosX()){
-            newPositionX -= SPEED;
-        }
-        else if(getPosX() < refActor.getPosX()){
-            newPositionX += SPEED;
+    public void searchAndDestroy() {
+        if (player == null) {
+            this.player = (Player) super.getScene().getFirstActorByName("Player");
+            new Loop<>(new Invoke<>(this::searchAndDestroy)).scheduleFor(this);
+            return;
         }
 
-        if(getPosY() > refActor.getPosY()){
-            newPositionY -= SPEED;
-        }
-        else if(getPosY() < refActor.getPosY()){
-            newPositionY += SPEED;
-        }
+        int playerX = player.getPosX();
+        int playerY = player.getPosY();
+        int heliX = getPosX();
+        int heliY = getPosY();
 
-        setPosition(newPositionX, newPositionY);
-        if(intersects(refActor)){
-            refActor.setEnergy(refActor.getEnergy() - 1);
-        }
+        if      (playerX > heliX) heliX++;
+        else if (playerX < heliX) heliX--;
+
+        if      (playerY > heliY) heliY++;
+        else if (playerY < heliY) heliY--;
+
+        this.setPosition(heliX, heliY);
+
+        if (intersects(player))
+            player.setEnergy(player.getEnergy() - 1);
     }
 }

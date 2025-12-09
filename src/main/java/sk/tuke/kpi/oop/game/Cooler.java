@@ -8,47 +8,56 @@ import sk.tuke.kpi.gamelib.framework.actions.Loop;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 
 public class Cooler extends AbstractActor implements Switchable{
-    private boolean isOn;
+    private Animation normalAnimation;
     private Reactor reactor;
-    private Animation fanAnimation;
 
-    public Cooler(Reactor reactor){
-        this.reactor = reactor;
-        fanAnimation = new Animation("sprites/fan.png", 32, 32, 0.2f);
-        setAnimation(fanAnimation);
-        fanAnimation.pause();
+    private boolean isOn;
+
+    public Cooler(Reactor newReactor) {
         isOn = false;
+        this.reactor = newReactor;
+        this.normalAnimation = new Animation("sprites/fan.png", 32, 32, 0.1f,
+            Animation.PlayMode.LOOP_PINGPONG);
+        setAnimation(normalAnimation);
+        normalAnimation.pause();
     }
 
-    public Reactor getReactor(){
+    public void toggle() {
+        isOn = !isOn;
+        updateAnimation();
+    }
+
+    public void turnOn() {
+        isOn = true;
+        updateAnimation();
+    }
+
+    public void turnOff() {
+        isOn = false;
+        updateAnimation();
+    }
+
+    protected Reactor getReactor() {
         return reactor;
     }
 
-    @Override
-    public void turnOn(){
-        isOn = true;
-        fanAnimation.play();
+    public boolean isOn() {
+        return this.isOn;
     }
 
-    @Override
-    public void turnOff(){
-        isOn = false;
-        fanAnimation.pause();
+    public void updateAnimation() {
+        if (isOn)
+                normalAnimation.play();
+        else
+                normalAnimation.pause();
     }
 
-    @Override
-    public boolean isOn(){
-        return isOn;
-    }
-
-    private void coolReactor(){
-        if(reactor != null && isOn){
+    private void coolReactor() {
+        if (isOn && reactor != null)
             reactor.decreaseTemperature(1);
-        }
     }
-
     @Override
-    public void addedToScene(@NotNull Scene scene){
+    public void addedToScene(@NotNull Scene scene) {
         super.addedToScene(scene);
         new Loop<>(new Invoke<>(this::coolReactor)).scheduleFor(this);
     }

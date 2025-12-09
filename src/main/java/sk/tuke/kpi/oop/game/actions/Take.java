@@ -1,37 +1,42 @@
 package sk.tuke.kpi.oop.game.actions;
 
-import sk.tuke.kpi.gamelib.framework.actions.AbstractAction;
 import sk.tuke.kpi.gamelib.Actor;
-import sk.tuke.kpi.oop.game.Keeper;
-import sk.tuke.kpi.oop.game.tools.Collectible;
 import sk.tuke.kpi.gamelib.Scene;
+import sk.tuke.kpi.gamelib.framework.actions.AbstractAction;
+import sk.tuke.kpi.oop.game.Keeper;
+import sk.tuke.kpi.oop.game.items.Collectible;
 
 import java.util.List;
 
-public class Take<K extends Keeper> extends AbstractAction<K>{
+public class Take<A extends Keeper> extends AbstractAction<A>{
+
+
+    public Take(){
+
+    }
+
     @Override
     public void execute(float deltaTime){
-        K keeper = getActor();
-        if(getActor() == null || getActor().getScene() == null){
-            setDone(true);
+        if(isDone())
             return;
-        }
-        Scene scene=keeper.getScene();
-        List<Actor> actors = scene.getActors();
-        for(Actor actor : actors){
-            if(actor instanceof Collectible && actor.intersects(keeper)){
+
+        setDone(true);
+        if(getActor() == null || getActor().getScene()==null)
+            return;
+
+        Scene scene = getActor().getScene();
+        List<Actor> actorList = scene.getActors();
+        for(Actor item: actorList){
+            if(item instanceof Collectible && item.intersects(getActor())){
                 try{
-                    keeper.getBackpack().add((Collectible) actor);
-                    scene.removeActor(actor);
+                    getActor().getBackpack().add((Collectible) item);
+                    scene.removeActor(item);
                     break;
-                }
-                catch(IllegalStateException exception){
-                    scene.getOverlay()
-                        .drawText(exception.getMessage(), 10, 10)
-                        .showFor(2);
+                } catch (IllegalStateException e){
+                    scene.getOverlay().drawText(e.getMessage(), 0, 0).showFor(2);
                 }
             }
         }
-        setDone(true);
+
     }
 }

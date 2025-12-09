@@ -1,85 +1,119 @@
 package sk.tuke.kpi.oop.game.characters;
 
+import sk.tuke.kpi.gamelib.Disposable;
+import sk.tuke.kpi.gamelib.GameApplication;
+import sk.tuke.kpi.gamelib.Scene;
+import sk.tuke.kpi.gamelib.actions.ActionSequence;
+import sk.tuke.kpi.gamelib.actions.Invoke;
+import sk.tuke.kpi.gamelib.actions.Wait;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
+import sk.tuke.kpi.gamelib.framework.actions.Loop;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+import sk.tuke.kpi.gamelib.messages.Topic;
 import sk.tuke.kpi.oop.game.Direction;
-import sk.tuke.kpi.oop.game.Movable;
 import sk.tuke.kpi.oop.game.Keeper;
-import sk.tuke.kpi.oop.game.tools.Backpack;
+import sk.tuke.kpi.oop.game.Movable;
+import sk.tuke.kpi.oop.game.items.Backpack;
+import sk.tuke.kpi.oop.game.weapons.Firearm;
+import sk.tuke.kpi.oop.game.weapons.Gun;
 
-public class Ripley extends AbstractActor implements Movable, Keeper{
-    private Animation ripleyAnimation;
-    private int speed = 2;
-    private int energy = 50;
-    private int ammo = 150;
+import java.util.Objects;
+
+public class Ripley extends AbstractActor implements Movable, Keeper, Alive, Armed {
     private Backpack backpack;
+    private final int speed = 2;
+    private int ammo;
+    private Firearm gun;
 
-    public Ripley(){
+    private Health health;
+    public static final Topic<Ripley> RIPLEY_DIED = Topic.create("ripley died", Ripley.class);
+    private Disposable disposable = null;
+    public Ripley() {
         super("Ellen");
-        ripleyAnimation = new Animation("sprites/player.png", 32, 32, 0.1f, Animation.PlayMode.LOOP_PINGPONG);
-        setAnimation(ripleyAnimation);
-        this.backpack = new Backpack("Ripley's backpack", 10);
+        setAnimation(new Animation("sprites/player.png", 32, 32,
+                        0.1f, Animation.PlayMode.LOOP_PINGPONG));
+        stoppedMoving();
+        backpack = new Backpack("Ripley's backpack", 10);
+        health = new Health(100);
+        health.onExhaustion( () -> {
+            this.setAnimation(new Animation("sprites/player_die.png",32,32,0.1f,
+                Animation.PlayMode.ONCE));
+            Objects.requireNonNull(getScene()).getMessageBus().publish(RIPLEY_DIED,this);
+        });
+        setFirearm(new Gun(30,30));
     }
 
     @Override
-    public int getSpeed(){
+    public int getSpeed() {
         return speed;
     }
 
     @Override
-    public void startedMoving(Direction direction){
-        ripleyAnimation.setRotation(direction.getAngle());
-        ripleyAnimation.play();
+    public void startedMoving(Direction direction) {
+        getAnimation().play();
+        getAnimation().setRotation(direction.getAngle());
     }
 
     @Override
-    public void stoppedMoving(){
-        ripleyAnimation.stop();
+    public void stoppedMoving() {
+        getAnimation().stop();
     }
 
-    public int getEnergy(){
-        return energy;
-    }
-
-    public void setEnergy(int energy){
-        if(energy < 0){
-            this.energy = 0;
-        }
-        else if(energy > 100){
-            this.energy = 100;
-        }
-        else{
-            this.energy = energy;
-        }
-    }
-
-    public int getAmmo(){
+    public int getAmmo() {
         return ammo;
     }
 
-    public void setAmmo(int ammo){
-        if(ammo < 0){
-            this.ammo = 0;
-        }
-        else if(ammo > 500){
-            this.ammo = 500;
-        }
-        else{
-            this.ammo = ammo;
-        }
+    public void setAmmo(int n) {
+        ammo = n;
     }
 
     @Override
-    public Backpack getBackpack(){
-        return this.backpack;
+    public Backpack getBackpack() {
+        return backpack;
     }
 
-    /*
-    public void showRipleyState(){
-        int windowHeight = Objects.requireNonNull(getScene()).getGame().getWindowSetup().getHeight();
+    public void showRipleyState() {
+        Scene scene = getScene();
+        if (scene == null)
+            return;
+        int windowHeight = scene.getGame().getWindowSetup().getHeight();
         int yTextPos = windowHeight - GameApplication.STATUS_LINE_OFFSET;
-        getScene().getGame().getOverlay().drawText("Energy " + energy, 120, yTextPos);
-        getScene().getGame().getOverlay().drawText("Ammo: " + ammo, 250, yTextPos);
+        scene.getGame().getOverlay().drawText("Energy: " + health.getValue(), 120, yTextPos);
+        scene.getGame().getOverlay().drawText("Ammo: " + gun.getAmmo() + "/" + gun.getMaxAmmo(), 320, yTextPos);
     }
-     */
+
+    public void decreaseEnergy() {
+        if (disposable != null)
+            return;
+
+        disposable = new Loop<>(
+            new ActionSequence<>(
+                new Invoke<>(() -> health.drain(1)),
+                new Wait<>(1)
+            )
+        ).scheduleFor(this);
+    }
+
+    public void removeDisposable() {
+        if (disposable == null)
+            return;
+
+        disposable.dispose();
+        disposable = null;
+    }
+
+    @Override
+    public Health getHealth() {
+        return health;
+    }
+
+    @Override
+    public Firearm getFirearm() {
+        return gun;
+    }
+
+    @Override
+    public void setFirearm(Firearm weapon) {
+        gun = weapon;
+    }
 }
